@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f7f7f7;
+}
+
+h1 {
+    color: #ff1493;
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+nav {
+    background-color: #ff7eb9;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #fff;
+    margin: 0 15px;
+    padding: 12px 18px;
+    border-radius: 5px;
+}
+
+nav a:hover {
+    background-color: #ff5d9e;
+    transition: background-color 0.3s ease;
+}
+
+.product {
+    background-color: #ffb6c1;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button {
+    background-color: #4caf50;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+}

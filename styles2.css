@@ -1,0 +1,21 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffd9e6;
+    text-align: center;
+}
+
+h1 {
+    color: #ff1493;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* הוספת ערך של השקיפות */
+}
+
+nav {
+    background-color: #ff7eb9;
+    padding: 10px;
+}
+
+.product {
+    background-color: pink;
+    padding: 10px;
+    border-radius: 10px;
+}
