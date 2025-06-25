@@ -1,0 +1,31 @@
+- name: Setup and deploy Node.js app with Docker Compose
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - python3-pip
+          - git
+          - docker.io
+          - docker-compose
+        update_cache: yes
+        state: present
+
+    - name: Add user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Clone repository
+      git:
+        repo: 'https://github.com/Reutp111/celebration-devops.git'
+        dest: /home/ubuntu/celebration-devops
+        version: main
+
+    - name: Build and run containers
+      shell: |
+        cd /home/ubuntu/celebration-devops
+        docker-compose up -d --build
