@@ -1,9 +1,9 @@
-version: '3.8'
+version: '3.3'
 services:
   app:
     build: .
     ports:
-      - "3001:3001"
+      - "80:3001"
     environment:
       - NODE_ENV=production
       - MONGO_URL=mongodb://mongo:27017/celebration
@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
 
   mongo:
-    image: mongo
+    image: mongo:5.0
     ports:
       - "27017:27017"
     volumes:
