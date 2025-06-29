@@ -1,27 +1,31 @@
-document.getElementById('contactForm').addEventListener('submit', async function(event) {
-    event.preventDefault(); // מונע את שליחת הטופס בדרך הרגילה
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+  contactForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
 
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const message = document.getElementById('message').value;
+    const name = document.getElementById('name')?.value.trim();
+    const email = document.getElementById('email')?.value.trim();
+    const message = document.getElementById('message')?.value.trim();
+
+    if (!name || !email || !message) {
+      return alert('אנא מלא/י את כל השדות');
+    }
 
     try {
-        const response = await fetch('http://localhost:3001/contact', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ name, email, message })
-        });
+      const response = await fetch(`${window.location.origin}/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      });
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || 'שגיאה');
 
-        const result = await response.json();
-        alert(result.message);
+      alert(result.message);
+      contactForm.reset();
     } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-        alert('There was a problem with the submission');
+      console.error('Fetch error:', error);
+      alert('הייתה בעיה בשליחה');
     }
-});
+  });
+}
