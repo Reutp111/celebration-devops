@@ -2,13 +2,20 @@ let cartItems = [];
 
 function showTab(tabName) {
   document.querySelectorAll(".tab-content").forEach(el => el.style.display = 'none');
-  document.getElementById(tabName).style.display = 'block';
+  const tab = document.getElementById(tabName);
+  if (tab) tab.style.display = 'block';
 }
 
 async function updateGreeting(event) {
   event.preventDefault();
-  const fullname = document.getElementById("fullname").value;
-  document.getElementById("user-greeting").textContent = `שלום, ${fullname}`;
+  const fullnameEl = document.getElementById("fullname");
+  const greetingEl = document.getElementById("user-greeting");
+  if (!fullnameEl || !greetingEl) return;
+
+  const fullname = fullnameEl.value.trim();
+  if (!fullname) return alert('אנא הכנס שם');
+
+  greetingEl.textContent = `שלום, ${fullname}`;
 
   try {
     const response = await fetch('/login', {
@@ -17,24 +24,24 @@ async function updateGreeting(event) {
       body: JSON.stringify({ username: fullname })
     });
 
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const result = await response.json();
+    if (!response.ok) throw new Error(result.message || 'שגיאה');
+
     alert(result.message);
-    document.getElementById("fullname").value = '';
+    fullnameEl.value = '';
   } catch (error) {
     console.error('Fetch error:', error);
-    alert('There was a problem with the submission');
+    alert('לא הצלחנו לשלוח את המידע');
   }
 }
 
 function toggleCart() {
-  const cartContent = document.getElementById("cart-content");
-  cartContent.style.display = cartContent.style.display === "block" ? "none" : "block";
+  const el = document.getElementById("cart-content");
+  if (el) el.style.display = (el.style.display === "block" ? "none" : "block");
 }
 
-// מוספים לעגלה:
 function addToCart(name, image, price) {
-  const item = cartItems.find(item => item.name === name);
+  const item = cartItems.find(i => i.name === name);
   if (item) {
     item.quantity++;
     item.total = item.quantity * price;
@@ -66,17 +73,23 @@ function updateCart() {
 }
 
 function updateCartCount() {
-  const total = cartItems.reduce((sum, i) => sum + i.quantity, 0);
-  document.getElementById("cart-count").textContent = total;
+  const el = document.getElementById("cart-count");
+  if (el) {
+    el.textContent = cartItems.reduce((sum, i) => sum + i.quantity, 0);
+  }
 }
 
 function updateTotalPrice() {
-  const totalSum = cartItems.reduce((sum, i) => sum + i.total, 0);
-  document.getElementById("total-price").textContent = `סכום כולל: ${totalSum} ש''ח`;
+  const el = document.getElementById("total-price");
+  if (el) {
+    const totalSum = cartItems.reduce((sum, i) => sum + i.total, 0);
+    el.textContent = `סכום כולל: ${totalSum} ש''ח`;
+  }
 }
 
 function updateCartDropdown() {
   const tbody = document.getElementById("cart-items");
+  if (!tbody) return;
   tbody.innerHTML = '';
   cartItems.forEach(item => {
     const tr = document.createElement("tr");
@@ -94,4 +107,7 @@ function updateCartDropdown() {
   });
 }
 
-document.getElementById("login-form").addEventListener("submit", updateGreeting);
+const loginForm = document.getElementById("login-form");
+if (loginForm) {
+  loginForm.addEventListener("submit", updateGreeting);
+}
