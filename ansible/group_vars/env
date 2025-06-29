@@ -1,0 +1,15 @@
+    server_name: celebration-server
+    env: dev
+
+    vpc_name: celebration-vpc
+    network: 10.1.0.0/16
+    subnet_cidr: 10.1.0.0/24
+    env_name: colman
+    aws_region: eu-central-1
+    subnet: eu-central-1a
+    
+    keypair: ansible_new_key
+    
+    aws_ubuntu_ami: ami-06c374f393664f330
+    Server_type: t2.micro
+    server_volume_size: 8
