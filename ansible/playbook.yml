@@ -161,3 +161,4 @@
       shell: docker compose up -d
       args:
         chdir: /home/ubuntu/celebration-devops-main
+
