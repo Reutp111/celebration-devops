@@ -2,21 +2,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 
-// מודלים
 const Contact = require('./models/contact');
 const Login = require('./models/login');
+const Product = require('./models/product'); // <---- חדש
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// קבצים סטטיים מתוך public
 app.use(express.static(path.join(__dirname, 'public')));
-
-// תמיכה בפרמטרים
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-// חיבור למונגו
 const mongoUrl = process.env.MONGO_URL || 'mongodb://mongo:27017/celebration';
 mongoose.connect(mongoUrl, {
   useNewUrlParser: true,
@@ -25,12 +21,21 @@ mongoose.connect(mongoUrl, {
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// דפים סטטיים
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public/html/homepage.html')));
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public/html/contact.html')));
 app.get('/qa', (req, res) => res.sendFile(path.join(__dirname, 'public/html/qa.html')));
 
-// POST ל־/login
+// ------------------ חדש: API מוצרים ------------------
+app.get('/api/products', async (req, res, next) => {
+  try {
+    const products = await Product.find({});
+    res.json(products);
+  } catch (err) {
+    next(err);
+  }
+});
+// ------------------------------------------------------
+
 app.post('/login', async (req, res, next) => {
   const { username } = req.body;
   try {
@@ -42,7 +47,6 @@ app.post('/login', async (req, res, next) => {
   }
 });
 
-// POST ל־/contact
 app.post('/contact', async (req, res, next) => {
   const { name, email, message } = req.body;
   try {
@@ -54,7 +58,6 @@ app.post('/contact', async (req, res, next) => {
   }
 });
 
-// טיפול שגיאות מרכזי
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(err.status || 500).json({ success: false, message: err.message });
