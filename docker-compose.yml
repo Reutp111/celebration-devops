@@ -5,7 +5,7 @@ services:
     environment:
       - NODE_ENV=prod
       - MONGO_URL=mongodb://mongo:27017/celebration
-    image: Reutp111/celebration-devops:latest
+    image: reutp111/celebration-devops:latest
     ports:
       - "80:3001"
     depends_on:
