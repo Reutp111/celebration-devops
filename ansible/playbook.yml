@@ -239,7 +239,7 @@
         chdir: /home/ubuntu/celebration-devops-main
 
     - name: Seed MongoDB with default products
-      shell: node seedProducts.js
+      shell: node models/seedProducts.js
       args:
         chdir: /home/ubuntu/celebration-devops-main
 
