@@ -26,8 +26,14 @@ jobs:
         run: docker build --tag myapp .
 
       - name: Run Docker
-        run: docker run -d --name app -e MONGO_URL=mongodb://host.docker.internal:27017/celebration -p 80:3001 myapp
-
+        run: |
+          docker run -d --name app \
+            -e MONGO_URL=mongodb://host.docker.internal:27017/celebration \
+            -p 80:3001 myapp || \
+          docker run -d --name app \
+            -e MONGO_URL=mongodb://172.17.0.1:27017/celebration \
+            -p 80:3001 myapp
+            
       - name: Wait for server to be up
         run: |
           for i in {1..30}; do

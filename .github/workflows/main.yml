@@ -52,6 +52,11 @@ jobs:
             echo "Waiting for server... ($i)"
             sleep 2
           done
+          
+      - name: Show running containers
+        run: docker ps -a
+      - name: Show server logs
+        run: docker logs app || true
 
       - name: Set up Python
         uses: actions/setup-python@v4
