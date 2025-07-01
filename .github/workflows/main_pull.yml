@@ -1,0 +1,25 @@
+name: upload my image to DockerHub
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: build
+        run: docker build --tag myapp .
+      - name: Run Docker
+        run: docker run -d --name app -p 80:3001 myapp
+      - name: Set up Python
+        uses: actions/setup-python@2
+        with:
+          python-version: '3.9'
+      - name: Install software
+        run: sudo apt-get install -y chromium-browser
+      - name: Install the necessary packages
+        run: pip install requests webdriver_manager selenium pytest
+      - name: Run the PyTest script
+        run: pytest -rA
+         
