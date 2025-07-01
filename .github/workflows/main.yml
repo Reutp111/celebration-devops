@@ -42,21 +42,22 @@ jobs:
           MONGO_URL: mongodb://localhost:27017/celebration
         run: node models/seedProducts.js
 
-      - name: Start app
+      - name: Start app and wait for server
         env:
           MONGO_URL: mongodb://localhost:27017/celebration
         run: |
-          nohup npm start &
-          for i in {1..30}; do
+          nohup npm start > server.log 2>&1 &
+          for i in {1..40}; do
+            sleep 3
             curl -fs http://localhost:3001 && echo "Server is up!" && break
             echo "Waiting for server... ($i)"
-            sleep 2
           done
-          
-      - name: Show running containers
-        run: docker ps -a
-      - name: Show server logs
-        run: docker logs app || true
+          curl -v http://localhost:3001 || true
+          ps aux | grep node
+
+      - name: Show app logs if failed
+        if: failure()
+        run: cat server.log || true
 
       - name: Set up Python
         uses: actions/setup-python@v4
