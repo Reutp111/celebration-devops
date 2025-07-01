@@ -6,8 +6,8 @@ const productSchema = new mongoose.Schema({
   category: String,
   price: Number,
   image: String,
-  concepts: [String], // כדי לסנן לפי קונספטים
-  events: [String],   // כדי לסנן לפי אירועים
+  concepts: [String], // (לסינון, אם תרצי בהמשך)
+  events: [String],
 });
 
 const Product = mongoose.model('Product', productSchema);

@@ -11,7 +11,7 @@
     <header>
         <h1>celebration</h1>
         <div id="user-greeting">
-            <form id="login-form" onsubmit="updateGreeting(); return false;">
+            <form id="login-form" onsubmit="updateGreeting(event); return false;">
                 <input type="text" id="fullname" placeholder="הכנס שם מלא" required>
                 <button type="submit">התחבר</button>
             </form>
@@ -48,86 +48,7 @@
     </div>
 
     <div id="all" class="tab-content" style="display:block;">
-        <div class="product">
-            <h3>#001 - בלונים</h3>
-            <p><strong>תיאור:</strong> ערכה של 10 בלונים מגוונים</p>
-            <p><strong>קטגוריה:</strong> עיצוב יום הולדת</p>
-            <p><strong>מחיר:</strong> 30 ש"ח</p>
-            <img src="/images/balloons.jpg" alt="בלונים" width="150">
-            <button onclick="addToCart('#001 - בלונים', '/images/balloons.jpg', 1, 30)">הוסף לעגלה</button>
-        </div>
-        <div class="product">
-            <h3>#002 - מפה חד פעמית</h3>
-            <p><strong>תיאור:</strong> מפה חד פעמית עם דגלי העולם</p>
-            <p><strong>קטגוריה:</strong> כלי שולחן</p>
-            <p><strong>מחיר:</strong> 30 ש"ח</p>
-            <img src="/images/map.jpg" alt="מפה חד פעמית" width="150">
-            <button onclick="addToCart('#002 - מפה חד פעמית', '/images/map.jpg', 1, 30)">הוסף לעגלה</button>
-        </div>
-        <div class="product">
-            <h3>#003 - כוסות חד פעמיות</h3>
-            <p><strong>תיאור:</strong> ערכה של 20 כוסות חד פעמיות צבעוניות</p>
-            <p><strong>קטגוריה:</strong> כלי שולחן</p>
-            <p><strong>מחיר:</strong> 25 ש"ח</p>
-            <img src="/images/cups.jpg" alt="כוסות חד פעמיות" width="150">
-            <button onclick="addToCart('#003 - כוסות חד פעמיות', '/images/cups.jpg', 1, 25)">הוסף לעגלה</button>
-        </div>
-        <div class="product">
-            <h3>#004 - צלחות חד פעמיות</h3>
-            <p><strong>תיאור:</strong> ערכה של 20 צלחות חד פעמיות מעוצבות</p>
-            <p><strong>קטגוריה:</strong> כלי שולחן</p>
-            <p><strong>מחיר:</strong> 25 ש"ח</p>
-            <img src="/images/plates.jpg" alt="צלחות חד פעמיות" width="150">
-            <button onclick="addToCart('#004 - צלחות חד פעמיות', '/images/plates.jpg', 1, 25)">הוסף לעגלה</button>
-        </div>
-        <div class="product">
-            <h3>#005 - קונפטי</h3>
-            <p><strong>תיאור:</strong> ערכת קונפטי ליצירת אווירה קסומה באירוע</p>
-            <p><strong>קטגוריה:</strong> אביזרי מסיבה</p>
-            <p><strong>מחיר:</strong> 15 ש"ח</p>
-            <img src="/images/confetti.jpg" alt="קונפטי" width="150">
-            <button onclick="addToCart('#005 - קונפטי', '/images/confetti.jpg', 1, 15)">הוסף לעגלה</button>
-        </div>
-        <div class="product">
-            <h3>#006 - כובעי מסיבה</h3>
-            <p><strong>תיאור:</strong> ערכה של 10 כובעי מסיבה עם פסים צבעוניים</p>
-            <p><strong>קטגוריה:</strong> אביזרי מסיבה</p>
-            <p><strong>מחיר:</strong> 10 ש"ח</p>
-            <img src="/images/party_hats.jpg" alt="כובעי מסיבה" width="150">
-            <button onclick="addToCart('#006 - כובעי מסיבה', '/images/party_hats.jpg', 1, 10)">הוסף לעגלה</button>
-        </div>
-        <div class="product">
-            <h3>#007 - דגלים</h3>
-            <p><strong>תיאור:</strong> ערכה של 10 דגלים לתלייה בפינה או מעל השולחן</p>
-            <p><strong>קטגוריה:</strong> אביזרי מסיבה</p>
-            <p><strong>מחיר:</strong> 20 ש"ח</p>
-            <img src="/images/flags.jpg" alt="דגלים" width="150">
-            <button onclick="addToCart('#007 - דגלים', '/images/flags.jpg', 1, 20)">הוסף לעגלה</button>
-        </div>
-        <div class="product">
-            <h3>#008 - פיניאטה</h3>
-            <p><strong>תיאור:</strong> פיניאטה בצורת מגלה עם פריטים קטנים בתוכה</p>
-            <p><strong>קטגוריה:</strong> אביזרי מסיבה</p>
-            <p><strong>מחיר:</strong> 40 ש"ח</p>
-            <img src="/images/pinata.jpg" alt="פיניאטה" width="150">
-            <button onclick="addToCart('#008 - פיניאטה', '/images/pinata.jpg', 1, 40)">הוסף לעגלה</button>
-        </div>
-        <div class="product">
-            <h3>#009 - אותיות מוארות</h3>
-            <p><strong>תיאור:</strong> אותיות מוארות ליצירת כיתובים מרהיבים</p>
-            <p><strong>קטגוריה:</strong> אביזרי מסיבה</p>
-            <p><strong>מחיר:</strong> 30 ש"ח </p>
-            <img src="/images/lighted_letters.jpg" alt="אותיות מוארות" width="150">
-            <button onclick="addToCart('#009 - אותיות מוארות', '/images/lighted_letters.jpg', 1, 30)">הוסף לעגלה</button>
-        </div>
-        <div class="product">
-            <h3>#010 - גליל חוט לבלונים</h3>
-            <p><strong>תיאור:</strong> חוט ורוד לבלונים</p>
-            <p><strong>קטגוריה:</strong> בלונים</p>
-            <p><strong>מחיר:</strong> 30 ש"ח </p>
-            <img src="/images/HOT.jpg" alt="בלונים" width="150">
-            <button onclick="addToCart('#010 - גליל חוט לבלונים', '/images/HOT.jpg', 1, 30)">הוסף לעגלה</button>
-        </div>
+        <!-- המוצרים יכנסו לכאן דינאמית מה-JS -->
     </div>
 
     <div id="whatsapp-icon" style="position: fixed; bottom: 20px; left: 20px;">

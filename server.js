@@ -4,7 +4,8 @@ const path = require('path');
 
 const Contact = require('./models/contact');
 const Login = require('./models/login');
-const Product = require('./models/product'); // <---- חדש
+const Product = require('./models/product');
+const Order = require('./models/order'); // חדש
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -21,11 +22,12 @@ mongoose.connect(mongoUrl, {
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
+// ראוטים עיקריים
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public/html/homepage.html')));
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public/html/contact.html')));
 app.get('/qa', (req, res) => res.sendFile(path.join(__dirname, 'public/html/qa.html')));
 
-// ------------------ חדש: API מוצרים ------------------
+// API: מוצרים מה-DB
 app.get('/api/products', async (req, res, next) => {
   try {
     const products = await Product.find({});
@@ -34,8 +36,20 @@ app.get('/api/products', async (req, res, next) => {
     next(err);
   }
 });
-// ------------------------------------------------------
 
+// API: שמירת הזמנה
+app.post('/api/orders', async (req, res, next) => {
+  try {
+    const { name, phone, email, paymentMethod, cart } = req.body;
+    const order = new Order({ name, phone, email, paymentMethod, cart, createdAt: new Date() });
+    await order.save();
+    res.status(201).json({ message: 'Order saved successfully' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// API: שמירת לוגין
 app.post('/login', async (req, res, next) => {
   const { username } = req.body;
   try {
@@ -47,6 +61,7 @@ app.post('/login', async (req, res, next) => {
   }
 });
 
+// API: צור קשר
 app.post('/contact', async (req, res, next) => {
   const { name, email, message } = req.body;
   try {

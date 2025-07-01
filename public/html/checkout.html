@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סיום רכישה | celebration</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .checkout-container {
+            background: #fff0f5;
+            border-radius: 10px;
+            margin: 40px auto;
+            padding: 32px;
+            max-width: 480px;
+            box-shadow: 0 2px 10px #0001;
+        }
+        .checkout-title {
+            color: #FF1493;
+            margin-bottom: 24px;
+        }
+        .order-summary {
+            background: #ffe6f2;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        .order-summary ul { padding: 0; margin: 0; list-style: none; }
+        .order-summary li { text-align: right; margin-bottom: 8px; }
+        .success-msg {
+            color: green;
+            font-weight: bold;
+            margin-top: 30px;
+            font-size: 1.3em;
+            background: #eaffea;
+            border-radius: 6px;
+            padding: 16px;
+        }
+    </style>
+    <script src="/js/checkout.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>celebration</h1>
+        <nav>
+            <a href="/html/homepage.html">חזרה לחנות</a>
+        </nav>
+    </header>
+    <main>
+        <div class="checkout-container">
+            <h2 class="checkout-title">טופס סיום הזמנה</h2>
+            <form id="order-form">
+                <input type="text" id="order-name" placeholder="שם מלא" required><br><br>
+                <input type="tel" id="order-phone" placeholder="טלפון" required pattern="^0\d{8,9}$"><br><br>
+                <input type="email" id="order-email" placeholder="אימייל" required><br><br>
+                <select id="payment-method" required>
+                    <option value="">בחר אמצעי תשלום</option>
+                    <option value="credit">כרטיס אשראי</option>
+                    <option value="bit">ביט</option>
+                    <option value="cash">מזומן לשליח</option>
+                </select><br><br>
+                <button type="submit" class="button">סיים והעבר לתשלום</button>
+            </form>
+            <div class="order-summary">
+                <h4>סיכום עגלה</h4>
+                <ul id="order-cart-list"></ul>
+                <div id="order-total"></div>
+            </div>
+            <div id="order-success" class="success-msg" style="display:none;"></div>
+        </div>
+    </main>
+</body>
+</html>
