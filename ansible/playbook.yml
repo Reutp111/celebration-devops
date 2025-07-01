@@ -240,9 +240,14 @@
 
     - name: Wait for MongoDB to be ready in the container
       shell: |
-        until docker exec celebration-devops bash -c "nc -z mongo 27017"; do
-          echo 'Waiting for MongoDB to be ready...';
-          sleep 2;
+        for i in {1..30}; do
+          docker exec celebration-devops node -e "require('mongoose').connect('mongodb://mongo:27017/celebration').then(()=>process.exit(0)).catch(()=>process.exit(1))"
+          if [ $? -eq 0 ]; then
+            echo "Mongo is up!"
+            break
+          fi
+          echo "Waiting for MongoDB..."
+          sleep 2
         done
       args:
         chdir: /home/ubuntu/celebration-devops-main
