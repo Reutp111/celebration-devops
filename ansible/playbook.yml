@@ -238,6 +238,15 @@
       args:
         chdir: /home/ubuntu/celebration-devops-main
 
+    - name: Wait for MongoDB to be ready in the container
+      shell: |
+        until docker exec celebration-devops bash -c "nc -z mongo 27017"; do
+          echo 'Waiting for MongoDB to be ready...';
+          sleep 2;
+        done
+      args:
+        chdir: /home/ubuntu/celebration-devops-main
+
     - name: Seed MongoDB with default products
       shell: docker exec celebration-devops node models/seedProducts.js
       args:
