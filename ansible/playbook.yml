@@ -233,7 +233,7 @@
         - docker build . --tag {{ docker_user }}/celebration-devops:latest
         - docker push {{ docker_user }}/celebration-devops:latest
 
-   - name: start docker app (both mongo and node)
+    - name: start docker app (both mongo and node)
       shell: docker compose up -d
       args:
         chdir: /home/ubuntu/celebration-devops-main

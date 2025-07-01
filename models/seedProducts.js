@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Product = require('./models/product'); // ודאי שהנתיב נכון
+const Product = require('./product'); // ודאי שהנתיב נכון
 
 mongoose.connect('mongodb://localhost:27017/celebration', {
   useNewUrlParser: true,
