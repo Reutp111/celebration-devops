@@ -13,7 +13,7 @@ jobs:
       - name: Run Docker
         run: docker run -d --name app -p 80:3001 myapp
       - name: Set up Python
-        uses: actions/setup-python@2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
       - name: Install software
@@ -22,4 +22,3 @@ jobs:
         run: pip install requests webdriver_manager selenium pytest
       - name: Run the PyTest script
         run: pytest -rA
-         
