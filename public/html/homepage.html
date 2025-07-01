@@ -9,6 +9,77 @@
     <link rel="stylesheet" href="/css/styles3.css">
     <link rel="stylesheet" href="/css/stylesFINAL.css">
     <script src="/js/script.js" defer></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        // שליפת מוצרים מה-API שלך
+        const response = await fetch('/api/products');
+        const products = await response.json();
+
+        // סידור לפי קטגוריה/קונספט/הכל
+        const byCategory = {};
+        const byEvent = {};
+        products.forEach(product => {
+          if (product.category) {
+            byCategory[product.category] = byCategory[product.category] || [];
+            byCategory[product.category].push(product);
+          }
+          if (product.event) {
+            byEvent[product.event] = byEvent[product.event] || [];
+            byEvent[product.event].push(product);
+          }
+        });
+
+        // פונקציית עזר לבניית HTML של מוצר
+        function productCard(prod) {
+          return `
+            <div class="product-card">
+              <img src="${prod.image}" alt="${prod.name}" class="product-image">
+              <h3>${prod.name}</h3>
+              <p>${prod.description}</p>
+              <div class="price">${prod.price} ₪</div>
+              <button onclick="addToCart('${prod._id}', '${prod.name}', ${prod.price})">הוסף לעגלה</button>
+            </div>
+          `;
+        }
+
+        // כל המוצרים
+        document.getElementById('all').innerHTML = `
+          <div class="products-list">
+            ${products.map(productCard).join('')}
+          </div>
+        `;
+
+        // לפי קונספט (קטגוריה)
+        document.getElementById('concept').innerHTML = Object.keys(byCategory).map(cat => `
+          <h2>${cat}</h2>
+          <div class="products-list">
+            ${byCategory[cat].map(productCard).join('')}
+          </div>
+        `).join('');
+
+        // לפי אירוע (אם קיים בשדות, אחרת אפשר להסתיר)
+        if (Object.keys(byEvent).length) {
+          document.getElementById('event').innerHTML = Object.keys(byEvent).map(ev => `
+            <h2>${ev}</h2>
+            <div class="products-list">
+              ${byEvent[ev].map(productCard).join('')}
+            </div>
+          `).join('');
+        } else {
+          document.getElementById('event').innerHTML = "<p>אין אירועים זמינים.</p>";
+        }
+
+        // ברירת מחדל: להציג את כל המוצרים
+        showTab('all');
+      });
+
+      // פונקציית החלפת טאבים (אם כבר קיימת ב-js/script.js, אפשר למחוק)
+      function showTab(tabName) {
+        ['concept', 'event', 'all'].forEach(tab => {
+          document.getElementById(tab).style.display = (tab === tabName) ? 'block' : 'none';
+        });
+      }
+    </script>
 </head>
 
 <body>
