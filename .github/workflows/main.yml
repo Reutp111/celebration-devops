@@ -13,9 +13,9 @@ jobs:
         ports:
           - 27017:27017
         options: >-
-          --health-cmd "mongo --eval 'db.runCommand(\"ping\").ok'" 
-          --health-interval 10s 
-          --health-timeout 5s 
+          --health-cmd "mongo --eval 'db.runCommand(\"ping\").ok'"
+          --health-interval 10s
+          --health-timeout 5s
           --health-retries 5
 
     steps:
@@ -31,7 +31,7 @@ jobs:
 
       - name: Wait for MongoDB to be ready
         run: |
-          for i in {1..15}; do
+          for i in {1..20}; do
             nc -z localhost 27017 && echo "Mongo is up!" && break
             echo "Waiting for mongo... ($i)"
             sleep 3
@@ -45,7 +45,13 @@ jobs:
       - name: Start app
         env:
           MONGO_URL: mongodb://localhost:27017/celebration
-        run: nohup npm start & sleep 8
+        run: |
+          nohup npm start &
+          for i in {1..30}; do
+            curl -fs http://localhost:3001 && echo "Server is up!" && break
+            echo "Waiting for server... ($i)"
+            sleep 2
+          done
 
       - name: Set up Python
         uses: actions/setup-python@v4
