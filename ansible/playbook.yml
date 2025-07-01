@@ -233,16 +233,16 @@
         - docker build . --tag {{ docker_user }}/celebration-devops:latest
         - docker push {{ docker_user }}/celebration-devops:latest
 
-    - name: start docker app (both mongo and node)
+   - name: start docker app (both mongo and node)
       shell: docker compose up -d
       args:
         chdir: /home/ubuntu/celebration-devops-main
 
     - name: Seed MongoDB with default products
-      shell: node models/seedProducts.js
+      shell: docker exec celebration-devops node models/seedProducts.js
       args:
         chdir: /home/ubuntu/celebration-devops-main
-
+        
     - name: get public IP from server
       shell: curl ident.me
       register: ip_address
