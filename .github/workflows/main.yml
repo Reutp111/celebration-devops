@@ -7,6 +7,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:5.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand(\"ping\").ok'" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v3
 
@@ -18,15 +29,22 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Start MongoDB
+      - name: Wait for MongoDB to be ready
         run: |
-          docker run -d --name mymongo -p 27017:27017 mongo:5.0
-          sleep 10
+          for i in {1..15}; do
+            nc -z localhost 27017 && echo "Mongo is up!" && break
+            echo "Waiting for mongo... ($i)"
+            sleep 3
+          done
 
       - name: Seed products
+        env:
+          MONGO_URL: mongodb://localhost:27017/celebration
         run: node models/seedProducts.js
 
       - name: Start app
+        env:
+          MONGO_URL: mongodb://localhost:27017/celebration
         run: nohup npm start & sleep 8
 
       - name: Set up Python

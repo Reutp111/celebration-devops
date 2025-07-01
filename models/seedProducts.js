@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Product = require('./product');
 
-// קודם נשתמש במשתנה סביבה (אם לא קיים, נ fallback ל-mongo בדוקר ואז ל-localhost)
 const mongoUrl =
   process.env.MONGO_URL ||
   'mongodb://mongo:27017/celebration' ||
