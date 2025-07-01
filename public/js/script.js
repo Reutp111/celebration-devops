@@ -40,16 +40,17 @@ function toggleCart() {
   if (el) el.style.display = (el.style.display === "block" ? "none" : "block");
 }
 
-function addToCart(name, image, price) {
+function addToCart(name, image, quantity, price) {
   const item = cartItems.find(i => i.name === name);
   if (item) {
-    item.quantity++;
-    item.total = item.quantity * price;
+    item.quantity += quantity;
+    item.total = item.quantity * item.price;
   } else {
-    cartItems.push({ name, image, quantity: 1, price, total: price });
+    cartItems.push({ name, image, quantity, price, total: quantity * price });
   }
   updateCart();
 }
+
 
 function changeQuantity(name, delta) {
   const item = cartItems.find(i => i.name === name);
