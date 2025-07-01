@@ -11,6 +11,7 @@ services:
     depends_on:
       - mongo
     restart: unless-stopped
+    command: /bin/bash -c "node models/seedProducts.js && node server.js"
 
   mongo:
     image: mongo:5.0
@@ -21,4 +22,3 @@ services:
 
 volumes:
   mongo-data:
-

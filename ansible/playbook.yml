@@ -28,7 +28,7 @@
         regexp: 'vpc_id: '
         line: 'vpc_id: {{ vpc.vpc.id }}'
         state: present
-        create: True
+        create: true
 
     - name: associate subnet to the VPC
       amazon.aws.ec2_vpc_subnet:
@@ -42,11 +42,10 @@
           Name: "{{ item.subnet_name }}"
         wait: yes
       loop:
-      - subnet_name: "{{ vpc_name }}_public"
-        env_network: "{{ subnet_cidr }}"
-        external_ip: yes
-        az: "{{ subnet }}"
-
+        - subnet_name: "{{ vpc_name }}_public"
+          env_network: "{{ subnet_cidr }}"
+          external_ip: yes
+          az: "{{ subnet }}"
       register: subnet
 
     - name: Add subnet definition to vars file
@@ -55,7 +54,7 @@
         regexp: 'subnet_id: '
         line: 'subnet_id: {{ subnet.results[0].subnet.id }}'
         state: present
-        create: True
+        create: true
 
     - name: Create Internet Gateway
       amazon.aws.ec2_vpc_igw:
@@ -72,7 +71,7 @@
         regexp: 'igw_id: '
         line: 'igw_id: {{ igw.gateway_id }}'
         state: present
-        create: True
+        create: true
 
     - name: Create Route Table
       amazon.aws.ec2_vpc_route_table:
@@ -88,15 +87,15 @@
           Name: "{{ vpc_name }}public_rt"
 
     - name: Create security group
-      ec2_group:
+      amazon.aws.ec2_group:
         name: "{{ vpc_name }} VPC SG"
-        description: "{{ vpc_name }} VPC 5G"
+        description: "{{ vpc_name }} VPC SG"
         vpc_id: "{{ vpc.vpc.id }}"
         region: "{{ aws_region }}"
         state: present
         rules:
           - proto: tcp
-            ports: [22, 80]
+            ports: [22, 80, 3001]
             cidr_ip: 0.0.0.0/0
       register: sg
 
@@ -131,6 +130,7 @@
           "tag:Name": "{{ server_name }}"
           instance-state-name: ["running"]
       register: ec2_data
+
     - debug: var=ec2_data.instances[0].public_ip_address
 
     - name: Add server public IP to app host group
@@ -142,7 +142,7 @@
         regexp: 'server_id: '
         line: 'server_id: {{ ec2_data.instances[0].instance_id }}'
         state: present
-        create: True
+        create: true
 
     - name: Wait for SSH to be ready
       wait_for:
@@ -165,6 +165,17 @@
     - group_vars/docker.env
 
   tasks:
+    - name: Update apt and install prerequisites
+      apt:
+        name:
+          - curl
+          - git
+          - nodejs
+          - npm
+          - python3-pip
+        state: present
+        update_cache: true
+
     - name: Add GPG key for Docker
       ansible.builtin.shell: wget -qO - https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 
@@ -227,11 +238,16 @@
       args:
         chdir: /home/ubuntu/celebration-devops-main
 
+    - name: Seed MongoDB with default products
+      shell: node seedProducts.js
+      args:
+        chdir: /home/ubuntu/celebration-devops-main
+
     - name: get public IP from server
       shell: curl ident.me
       register: ip_address
 
     - debug: 
        msg:
-        - "Don't forget to change the HOST secret ing GitHub to {{ ip_address.stdout }}"
-        - "your app is ready to go at http://{{ ip_address.stdout }}"   
+        - "Don't forget to change the HOST secret in GitHub to {{ ip_address.stdout }}"
+        - "your app is ready to go at http://{{ ip_address.stdout }}"
