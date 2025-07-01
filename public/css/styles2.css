@@ -1,21 +1,38 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #ffd9e6;
-    text-align: center;
-}
 
-h1 {
-    color: #ff1493;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* הוספת ערך של השקיפות */
-}
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            background-color: #ffd6e0;
+            margin: 0;
+            padding: 0;
+        }
 
-nav {
-    background-color: #ff7eb9;
-    padding: 10px;
-}
+        h1 {
+            color: #ff1493;
+            margin-top: 20px;
+        }
 
-.product {
-    background-color: pink;
-    padding: 10px;
-    border-radius: 10px;
-}
+        .faq-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-question {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px;
+        }
+
+        .question {
+            color: #ff1493;
+            margin-bottom: 10px;
+        }
+
+        .answer {
+            color: #ff69b4;
+        }
