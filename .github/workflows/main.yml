@@ -52,9 +52,11 @@ jobs:
             curl -fs http://localhost:3001 && echo "Server is up!" && break
             echo "Waiting for server... ($i)"
           done
-          curl -v http://localhost:3001 || true
-          ps aux | grep node
+          cat server.log
 
+      - name: Show app logs if failed
+        if: failure()
+        run: cat server.log || true
       - name: Show app logs if failed
         if: failure()
         run: cat server.log || true
