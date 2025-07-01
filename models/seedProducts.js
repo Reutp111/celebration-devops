@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
-const Product = require('./product'); // ודאי שהנתיב נכון
+const Product = require('./product');
 
-mongoose.connect('mongodb://localhost:27017/celebration', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// קודם נשתמש במשתנה סביבה (אם לא קיים, נ fallback ל-mongo בדוקר ואז ל-localhost)
+const mongoUrl =
+  process.env.MONGO_URL ||
+  'mongodb://mongo:27017/celebration' ||
+  'mongodb://localhost:27017/celebration';
 
+// רשימת המוצרים
 const products = [
   {
     name: "#001 - בלונים",
@@ -79,11 +81,32 @@ const products = [
   }
 ];
 
+// פונקציה שמנסה להתחבר למונגו עם ריטריי אוטומטי (מחכה ל-DB)
+async function connectWithRetry(retries = 10, delay = 3000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await mongoose.connect(mongoUrl);
+      return true;
+    } catch (err) {
+      console.log(`[seedProducts] Waiting for MongoDB... (${i + 1}/${retries})`);
+      await new Promise(res => setTimeout(res, delay));
+    }
+  }
+  throw new Error("Failed to connect to MongoDB after multiple attempts.");
+}
+
 async function seed() {
-  await Product.deleteMany({});
-  await Product.insertMany(products);
-  console.log("כל המוצרים הוזנו בהצלחה!");
-  mongoose.disconnect();
+  try {
+    await connectWithRetry();
+    await Product.deleteMany({});
+    await Product.insertMany(products);
+    console.log("כל המוצרים הוזנו בהצלחה!");
+    mongoose.disconnect();
+    process.exit(0);
+  } catch (err) {
+    console.error("[seedProducts]", err);
+    process.exit(1);
+  }
 }
 
 seed();
