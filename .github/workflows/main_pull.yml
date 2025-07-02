@@ -4,10 +4,11 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
-
+  
 jobs:
   build:
     runs-on: ubuntu-latest
+
     services:
       mongo:
         image: mongo:5.0
@@ -22,37 +23,63 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # המתן שמונגו יהיה חי
+      - name: Wait for MongoDB to be ready
+        run: |
+          for i in {1..30}; do
+            nc -z localhost 27017 && echo "Mongo is up!" && break
+            echo "Waiting for mongo... ($i)"
+            sleep 3
+          done
+
+      # בניית הדוקר אימג'
       - name: Build Docker Image
         run: docker build --tag myapp .
 
-      - name: Run Docker (try host.docker.internal, fallback to bridge IP)
+      # הרצת השרת עם משתנה סביבה של מונגו
+      - name: Run Docker Container
         run: |
           docker run -d --name app \
             -e MONGO_URL=mongodb://localhost:27017/celebration \
             -p 3001:3001 myapp
 
+      # המתנה שהשרת יעלה
       - name: Wait for server to be up
         run: |
           for i in {1..30}; do
-            curl -v http://localhost:3001 && break
+            curl -s http://localhost:3001 && echo "Server is up!" && break
             echo "Waiting for server... ($i)"
             sleep 3
           done
 
+      # הוצאת לוגים אם משהו נכשל
       - name: Show server logs if failed
-        if: always()
+        if: failure()
         run: docker logs app || true
 
+      # התקנת פייתון
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      - name: Install software
+      # התקנת כרומיום לסלניום
+      - name: Install Chromium
         run: sudo apt-get install -y chromium-browser
 
-      - name: Install the necessary packages
+      # התקנת כל הספריות לפייתון
+      - name: Install Python dependencies
         run: pip install requests webdriver_manager selenium pytest
 
-      - name: Run the PyTest script
+      # הרצת בדיקות סלניום
+      - name: Run Selenium PyTest
         run: pytest -rA
+
+      # (אופציונלי) הוסיפי כאן שלבי דוקר-האב אם צריך
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.docker_user }}
+          password: ${{ secrets.docker_token }}
+      - name: Push Docker Image
+        run: docker push reutp111/celebration-devops:latest
