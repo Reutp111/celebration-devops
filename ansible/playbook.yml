@@ -175,6 +175,10 @@
           - python3-pip
         state: present
         update_cache: true
+      register: apt_output
+
+    - debug:
+        var: apt_output
 
     - name: Add GPG key for Docker
       ansible.builtin.shell: wget -qO - https://download.docker.com/linux/ubuntu/gpg | apt-key add -
