@@ -49,13 +49,13 @@ jobs:
           nohup npm start > server.log 2>&1 &
           for i in {1..30}; do
             sleep 3
-            curl -fs http://localhost:3001 && echo "Server is up!" && break
+            curl -v http://localhost:3001 && echo "Server is up!" && break
             echo "Waiting for server... ($i)"
           done
           cat server.log
 
-      - name: Show app logs if failed
-        if: failure()
+      - name: Always show app logs
+        if: always()
         run: cat server.log || true
 
       - name: Set up Python
