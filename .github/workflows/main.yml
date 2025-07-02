@@ -86,3 +86,19 @@ jobs:
 
       - name: Push Docker Image
         run: docker push reutp111/celebration-devops:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/celebration-devops-main
+            sudo docker compose down || true
+            sudo docker pull reutp111/celebration-devops:latest
+            sudo docker compose up -d --build
