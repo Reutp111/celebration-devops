@@ -1,23 +1,31 @@
-version: '3.3'
+version: '3.8'
+
 services:
   web:
     container_name: celebration-devops
-    environment:
-      - NODE_ENV=prod
-      - MONGO_URL=mongodb://mongo:27017/celebration
     image: reutp111/celebration-devops:latest
+    environment:
+      - NODE_ENV=production
+      - MONGO_URL=mongodb://mongo:27017/celebration
     ports:
       - "80:3001"
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
     restart: unless-stopped
 
   mongo:
     image: mongo:5.0
+    container_name: mongo
     ports:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mongo-data:
