@@ -165,6 +165,18 @@
     - group_vars/docker.env
 
   tasks:
+    - name: Wait for apt lock to be released
+      shell: |
+        while fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
+          echo "Waiting for apt lock...";
+          sleep 2;
+        done
+        while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+          echo "Waiting for dpkg lock...";
+          sleep 2;
+        done
+      args:
+        warn: false
     - name: Update apt and install prerequisites
       apt:
         name:
