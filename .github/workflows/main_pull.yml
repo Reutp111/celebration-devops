@@ -29,7 +29,7 @@ jobs:
         run: |
           docker run -d --name app \
             -e MONGO_URL=mongodb://localhost:27017/celebration \
-            -p 80:3001 myapp
+            -p 3001:3001 myapp
 
       - name: Wait for server to be up
         run: |
