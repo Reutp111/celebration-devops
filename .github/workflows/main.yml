@@ -57,9 +57,6 @@ jobs:
       - name: Show app logs if failed
         if: failure()
         run: cat server.log || true
-      - name: Show app logs if failed
-        if: failure()
-        run: cat server.log || true
 
       - name: Set up Python
         uses: actions/setup-python@v4

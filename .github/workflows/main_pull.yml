@@ -25,7 +25,7 @@ jobs:
       - name: Build Docker Image
         run: docker build --tag myapp .
 
-      - name: Run Docker
+      - name: Run Docker (try host.docker.internal, fallback to 172.17.0.1)
         run: |
           docker run -d --name app \
             -e MONGO_URL=mongodb://host.docker.internal:27017/celebration \
@@ -33,14 +33,15 @@ jobs:
           docker run -d --name app \
             -e MONGO_URL=mongodb://172.17.0.1:27017/celebration \
             -p 80:3001 myapp
-            
+
       - name: Wait for server to be up
         run: |
-          for i in {1..30}; do
-            curl -sSf http://localhost:3001 && break
+          for i in {1..40}; do
+            curl -fs http://localhost:3001 && echo "Server is up!" && break
             echo "Waiting for server... ($i)"
             sleep 2
           done
+          docker logs app || true
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -55,3 +56,7 @@ jobs:
 
       - name: Run the PyTest script
         run: pytest -rA
+
+      - name: Show server logs if failed
+        if: failure()
+        run: docker logs app || true
