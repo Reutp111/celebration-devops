@@ -74,15 +74,14 @@ jobs:
       - name: Run Selenium PyTest
         run: pytest -rA
 
-      # אם את רוצה build & push ל־dockerhub גם פה (לא חובה), שימי כאן:
-      # - name: Login to DockerHub
-      #   uses: docker/login-action@v1
-      #   with:
-      #     username: ${{ secrets.docker_user }}
-      #     password: ${{ secrets.docker_token }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.docker_user }}
+          password: ${{ secrets.docker_token }}
 
-      # - name: Build Docker Image
-      #   run: docker build . --tag reutp111/celebration-devops:latest
+      - name: Build Docker Image
+        run: docker build . --tag reutp111/celebration-devops:latest
 
-      # - name: Push Docker Image
-      #   run: docker push reutp111/celebration-devops:latest
+      - name: Push Docker Image
+        run: docker push reutp111/celebration-devops:latest
