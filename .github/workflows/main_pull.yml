@@ -28,10 +28,7 @@ jobs:
       - name: Run Docker (try host.docker.internal, fallback to bridge IP)
         run: |
           docker run -d --name app \
-            -e MONGO_URL=mongodb://host.docker.internal:27017/celebration \
-            -p 80:3001 myapp || \
-          docker run -d --name app \
-            -e MONGO_URL=mongodb://172.17.0.1:27017/celebration \
+            -e MONGO_URL=mongodb://localhost:27017/celebration \
             -p 80:3001 myapp
 
       - name: Wait for server to be up
