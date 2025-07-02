@@ -9,8 +9,10 @@ const Order = require('./models/order');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-// נסה קודם את 'mongo' לדוקר, אם נכשל עובר ל'localhost'
-const mongoUrl = process.env.MONGO_URL || 'mongodb://mongo:27017/celebration';
+const mongoUrl = process.env.MONGO_URL ||
+    (process.env.NODE_ENV === 'production'
+      ? 'mongodb://mongo:27017/celebration'
+      : 'mongodb://localhost:27017/celebration');
 
 console.log('--- Server Startup ---');
 console.log(`PORT: ${PORT}`);
