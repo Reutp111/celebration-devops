@@ -131,7 +131,8 @@
           instance-state-name: ["running"]
       register: ec2_data
 
-    - debug: var=ec2_data.instances[0].public_ip_address
+    - debug:
+        var: ec2_data.instances[0].public_ip_address
 
     - name: Add server public IP to app host group
       add_host: hostname={{ ec2_data.instances[0].public_ip_address }} groups=app
@@ -144,7 +145,7 @@
         state: present
         create: true
 
-    - name: Wait for SSH to be ready
+    - name: Wait for SSH to be ready (port 22)
       wait_for:
         host: "{{ ec2_data.instances[0].public_ip_address }}"
         port: 22
@@ -152,9 +153,14 @@
 
     - name: Pause for ubuntu user access after boot
       ansible.builtin.pause:
-        seconds: 40
+        seconds: 90
 
-# -------------------------- STAGE 2: EC2 configuration --------------------------
+    - name: Check SSH connectivity before continue (debug)
+      shell: echo "Connected to {{ inventory_hostname }}"
+      delegate_to: "{{ ec2_data.instances[0].public_ip_address }}"
+      ignore_errors: yes
+
+#############################################################
 
 - name: Setup server and deploy Node.js app
   hosts: app
@@ -165,6 +171,7 @@
     - group_vars/docker.env
 
   tasks:
+
     - name: Wait for apt lock to be released
       shell: |
         while fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
@@ -175,7 +182,7 @@
           echo "Waiting for dpkg lock...";
           sleep 2;
         done
-     
+
     - name: Update apt and install prerequisites
       apt:
         name:
@@ -192,7 +199,7 @@
         var: apt_output
 
     - name: Add GPG key for Docker
-      ansible.builtin.shell: wget -qO - https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+      shell: wget -qO - https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
     - name: Add docker repository (Ubuntu 20.04)
       apt_repository:
@@ -201,9 +208,9 @@
 
     - name: Clean apt and fix broken dependencies
       shell: |
-        apt-get clean
-        apt-get update
-        apt-get install -f
+        sudo apt-get clean
+        sudo apt-get update
+        sudo apt-get install -f
 
     - name: Install Docker
       apt:
@@ -217,7 +224,7 @@
         update_cache: true
 
     - name: Restart Docker service
-      service: 
+      service:
         name: docker
         state: restarted
         enabled: yes
@@ -271,12 +278,12 @@
       shell: docker exec celebration-devops node models/seedProducts.js
       args:
         chdir: /home/ubuntu/celebration-devops-main
-        
+
     - name: get public IP from server
       shell: curl ident.me
       register: ip_address
 
-    - debug: 
-       msg:
-        - "Don't forget to change the HOST secret in GitHub to {{ ip_address.stdout }}"
-        - "your app is ready to go at http://{{ ip_address.stdout }}"
+    - debug:
+        msg:
+          - "Don't forget to change the HOST secret in GitHub to {{ ip_address.stdout }}"
+          - "your app is ready to go at http://{{ ip_address.stdout }}"
