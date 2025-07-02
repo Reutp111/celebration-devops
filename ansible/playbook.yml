@@ -175,8 +175,7 @@
           echo "Waiting for dpkg lock...";
           sleep 2;
         done
-      args:
-        warn: false
+     
     - name: Update apt and install prerequisites
       apt:
         name:
