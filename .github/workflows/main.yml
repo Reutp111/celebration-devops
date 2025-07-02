@@ -32,19 +32,19 @@ jobs:
       - name: Wait for MongoDB to be ready
         run: |
           for i in {1..30}; do
-            nc -z mongo 27017 && echo "Mongo is up!" && break
+            nc -z localhost 27017 && echo "Mongo is up!" && break
             echo "Waiting for mongo... ($i)"
             sleep 3
           done
 
       - name: Seed products
         env:
-          MONGO_URL: mongodb://mongo:27017/celebration
+          MONGO_URL: mongodb://localhost:27017/celebration
         run: node models/seedProducts.js
 
       - name: Start app and wait for server
         env:
-          MONGO_URL: mongodb://mongo:27017/celebration
+          MONGO_URL: mongodb://localhost:27017/celebration
         run: |
           nohup npm start > server.log 2>&1 &
           for i in {1..30}; do
