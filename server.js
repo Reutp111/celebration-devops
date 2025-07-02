@@ -19,22 +19,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+// --- Mongo connection ---
 mongoose.connect(mongoUrl, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1); // אם אין חיבור - צא (חשוב ל־CI)
-  });
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log('Connected to MongoDB');
+}).catch(err => {
+  console.error('MongoDB connection error:', err);
+  process.exit(1); // אם אין חיבור - צא (חשוב ל־CI)
+});
 
-// ראוטים עיקריים
+// --- Main HTML routes ---
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public/html/homepage.html')));
 app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'public/html/contact.html')));
 app.get('/qa', (req, res) => res.sendFile(path.join(__dirname, 'public/html/qa.html')));
+app.get('/html/checkout.html', (req, res) => res.sendFile(path.join(__dirname, 'public/html/checkout.html'))); // לסלניום
 
-// API: מוצרים מה-DB
+// --- API endpoints ---
 app.get('/api/products', async (req, res, next) => {
   try {
     const products = await Product.find({});
@@ -45,7 +47,6 @@ app.get('/api/products', async (req, res, next) => {
   }
 });
 
-// API: שמירת הזמנה
 app.post('/api/orders', async (req, res, next) => {
   try {
     const { name, phone, email, paymentMethod, cart } = req.body;
@@ -58,7 +59,6 @@ app.post('/api/orders', async (req, res, next) => {
   }
 });
 
-// API: שמירת לוגין
 app.post('/login', async (req, res, next) => {
   const { username } = req.body;
   try {
@@ -71,7 +71,6 @@ app.post('/login', async (req, res, next) => {
   }
 });
 
-// API: צור קשר
 app.post('/contact', async (req, res, next) => {
   const { name, email, message } = req.body;
   try {
@@ -84,13 +83,12 @@ app.post('/contact', async (req, res, next) => {
   }
 });
 
-// טיפול בשגיאות
+// --- Error Handlers ---
 app.use((err, req, res, next) => {
   console.error('Express Error Handler:', err);
   res.status(err.status || 500).json({ success: false, message: err.message });
 });
 
-// טיפול בשגיאות גלובליות
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection:', reason);
   process.exit(1);
@@ -100,4 +98,7 @@ process.on('uncaughtException', err => {
   process.exit(1);
 });
 
-app.listen(PORT, '0.0.0.0', () => console.log(`Server running on http://0.0.0.0:${PORT}`));
+// --- Listen ---
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
+});
