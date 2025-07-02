@@ -99,6 +99,20 @@
             cidr_ip: 0.0.0.0/0
       register: sg
 
+    - name: Create SSH key pair if not exists
+      amazon.aws.ec2_key:
+        name: "{{ keypair }}"
+        region: "{{ aws_region }}"
+        state: present
+      register: keypair_result
+
+    - name: Save private key to local file (first time only)
+      copy:
+        content: "{{ keypair_result.key.private_key }}"
+        dest: "./{{ keypair }}.pem"
+        mode: '0400'
+      when: keypair_result.changed and keypair_result.key.private_key is defined
+
     - name: Launch EC2 instance
       amazon.aws.ec2_instance:
         image_id: "{{ aws_ubuntu_ami }}"

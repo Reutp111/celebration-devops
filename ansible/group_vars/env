@@ -9,7 +9,7 @@
     aws_region: eu-central-1
     subnet: eu-central-1a
     
-    keypair: ansible_new_key
+    keypair: keypair
     
     aws_ubuntu_ami: ami-06c374f393664f330
     Server_type: t2.micro
