@@ -23,6 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
       # המתן שמונגו יהיה חי
       - name: Wait for MongoDB to be ready
         run: |
@@ -32,30 +40,28 @@ jobs:
             sleep 3
           done
 
-      # בניית הדוקר אימג'
-      - name: Build Docker Image
-        run: docker build --tag myapp .
+      # הרץ seed (אם יש לך products)
+      - name: Seed products
+        env:
+          MONGO_URL: mongodb://localhost:27017/celebration
+        run: node models/seedProducts.js
 
-      # הרצת השרת עם משתנה סביבה של מונגו
-      - name: Run Docker Container
+      # הרץ את השרת ברקע
+      - name: Start app and wait for server
+        env:
+          MONGO_URL: mongodb://localhost:27017/celebration
         run: |
-          docker run -d --name app \
-            -e MONGO_URL=mongodb://localhost:27017/celebration \
-            -p 3001:3001 myapp
-
-      # המתנה שהשרת יעלה
-      - name: Wait for server to be up
-        run: |
+          nohup npm start > server.log 2>&1 &
           for i in {1..30}; do
+            sleep 3
             curl -s http://localhost:3001 && echo "Server is up!" && break
             echo "Waiting for server... ($i)"
-            sleep 3
           done
+          cat server.log
 
-      # הוצאת לוגים אם משהו נכשל
-      - name: Show server logs if failed
-        if: failure()
-        run: docker logs app || true
+      - name: Show app logs if failed
+        if: always()
+        run: cat server.log || true
 
       # התקנת פייתון
       - name: Set up Python
@@ -75,11 +81,15 @@ jobs:
       - name: Run Selenium PyTest
         run: pytest -rA
 
-      # (אופציונלי) הוסיפי כאן שלבי דוקר-האב אם צריך
+      # בנה את הדוקר ודחוף רק אם הטסטים עברו!
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.docker_user }}
           password: ${{ secrets.docker_token }}
+
+      - name: Build Docker Image
+        run: docker build . --tag reutp111/celebration-devops:latest
+
       - name: Push Docker Image
         run: docker push reutp111/celebration-devops:latest
