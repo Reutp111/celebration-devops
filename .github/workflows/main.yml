@@ -49,7 +49,7 @@ jobs:
           nohup npm start > server.log 2>&1 &
           for i in {1..30}; do
             sleep 3
-            curl -v http://localhost:3001 && echo "Server is up!" && break
+            curl -s http://localhost:3001 && echo "Server is up!" && break
             echo "Waiting for server... ($i)"
           done
           cat server.log

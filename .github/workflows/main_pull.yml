@@ -31,7 +31,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # המתן שמונגו יהיה חי
       - name: Wait for MongoDB to be ready
         run: |
           for i in {1..30}; do
@@ -40,13 +39,11 @@ jobs:
             sleep 3
           done
 
-      # הרץ seed (אם יש לך products)
       - name: Seed products
         env:
           MONGO_URL: mongodb://localhost:27017/celebration
         run: node models/seedProducts.js
 
-      # הרץ את השרת ברקע
       - name: Start app and wait for server
         env:
           MONGO_URL: mongodb://localhost:27017/celebration
@@ -63,33 +60,29 @@ jobs:
         if: always()
         run: cat server.log || true
 
-      # התקנת פייתון
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      # התקנת כרומיום לסלניום
       - name: Install Chromium
         run: sudo apt-get install -y chromium-browser
 
-      # התקנת כל הספריות לפייתון
       - name: Install Python dependencies
         run: pip install requests webdriver_manager selenium pytest
 
-      # הרצת בדיקות סלניום
       - name: Run Selenium PyTest
         run: pytest -rA
 
-      # בנה את הדוקר ודחוף רק אם הטסטים עברו!
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.docker_user }}
-          password: ${{ secrets.docker_token }}
+      # אם את רוצה build & push ל־dockerhub גם פה (לא חובה), שימי כאן:
+      # - name: Login to DockerHub
+      #   uses: docker/login-action@v1
+      #   with:
+      #     username: ${{ secrets.docker_user }}
+      #     password: ${{ secrets.docker_token }}
 
-      - name: Build Docker Image
-        run: docker build . --tag reutp111/celebration-devops:latest
+      # - name: Build Docker Image
+      #   run: docker build . --tag reutp111/celebration-devops:latest
 
-      - name: Push Docker Image
-        run: docker push reutp111/celebration-devops:latest
+      # - name: Push Docker Image
+      #   run: docker push reutp111/celebration-devops:latest
