@@ -17,7 +17,7 @@ def driver():
 
 def test_homepage(driver):
     driver.get("http://localhost:3001")
-    time.sleep(2)  # תן זמן לטעינה
+    time.sleep(2)
     assert "celebration" in driver.title.lower()
     login_btn = driver.find_element(By.CSS_SELECTOR, "#login-form button[type='submit']")
     assert login_btn.is_displayed()
