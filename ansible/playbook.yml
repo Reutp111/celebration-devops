@@ -171,7 +171,7 @@
   vars_files:
     - group_vars/docker.env
   vars:
-    ansible_ssh_private_key_file: "{{ playbook_dir }}/home/reut/Downloads/celebration-devops-main/ansible/celebration-keypair.pem"
+    ansible_ssh_private_key_file: "{{ playbook_dir }}/home/reut/Downloads/celebration-devops-main/ansible/keypair.pem"
   tasks:
 
     - name: Wait for apt lock to be released
