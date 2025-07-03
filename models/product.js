@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema({
   category: String,
   price: Number,
   image: String,
-  concepts: [String], // (לסינון, אם תרצי בהמשך)
+  concepts: [String], 
   events: [String],
 });
 
